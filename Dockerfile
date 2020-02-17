@@ -1,13 +1,13 @@
-ARG BASE_IMAGE=arm32v7/node:10-alpine
+ARG BASE_IMAGE=node:10-alpine
 ARG OVERLAY_VERSION=v1.22.1.0`
 ARG OVERLAY_ARCH=arm
 
-FROM $BASE_IMAGE as builder
-
+FROM alpine as host
 ENV QEMU_URL https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/qemu-3.0.0+resin-arm.tar.gz
 RUN apk add curl && curl -L ${QEMU_URL} | tar zxvf - -C . --strip-components 1
 
-COPY --from=builder qemu-arm-static /bin
+FROM $BASE_IMAGE as builder
+COPY --from=host qemu-arm-static /bin
 
 ARG OVERLAY_VERSION
 ARG OVERLAY_ARCH
